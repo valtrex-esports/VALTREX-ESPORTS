@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VALTREX ESPORTS</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family: Arial, sans-serif;
+    background:#050505;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* PARTICLES */
+#particles{
+    position:fixed;
+    width:100%;
+    height:100%;
+    z-index:-2;
+}
+
+/* CURSOR GLOW */
+.cursor{
+    position:fixed;
+    width:20px;height:20px;
+    border-radius:50%;
+    background:#00f0ff;
+    pointer-events:none;
+    filter:blur(10px);
+    z-index:999;
+}
+
+/* INTRO SCREEN */
+#intro{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:black;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+    animation:fadeOut 2s forwards;
+    animation-delay:2s;
+}
+
+#intro h1{
+    font-size:60px;
+    color:#00f0ff;
+    text-shadow:0 0 30px #00f0ff;
+    animation:zoom 2s ease;
+}
+
+@keyframes zoom{
+    from{transform:scale(0.5);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+
+@keyframes fadeOut{
+    to{opacity:0;visibility:hidden}
+}
+
+/* NAV */
+nav{
+    padding:15px 40px;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid #00f0ff;
+}
+
+/* HERO */
+.hero{
+    text-align:center;
+    padding:100px 20px;
+}
+
+.hero h2{
+    font-size:50px;
+    color:#00f0ff;
+    animation:glow 2s infinite alternate;
+}
+
+@keyframes glow{
+    from{text-shadow:0 0 10px #00f0ff;}
+    to{text-shadow:0 0 40px #00f0ff;}
+}
+
+.hero button{
+    margin-top:20px;
+    padding:12px 25px;
+    border:2px solid #00f0ff;
+    background:transparent;
+    color:#00f0ff;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.hero button:hover{
+    background:#00f0ff;
+    color:black;
+    box-shadow:0 0 25px #00f0ff;
+}
+
+/* STATS */
+.stats{
+    display:flex;
+    justify-content:center;
+    gap:50px;
+    padding:40px;
+}
+
+.stat h3{
+    font-size:40px;
+    color:#00f0ff;
+}
+
+/* TEAM */
+.team{
+    text-align:center;
+    padding:50px;
+}
+
+.players{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.card{
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(10px);
+    margin:15px;
+    padding:20px;
+    width:200px;
+    border-radius:15px;
+    border:1px solid #00f0ff;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-10px) scale(1.05);
+    box-shadow:0 0 25px #00f0ff;
+}
+</style>
+</head>
+
+<body>
+
+<div id="intro"><h1>VALTREX</h1></div>
+<div class="cursor" id="cursor"></div>
+<canvas id="particles"></canvas>
+
+<nav><h1>VALTREX</h1></nav>
+
+<section class="hero">
+    <h2>VALTREX ESPORTS</h2>
+    <p>Dominate. Conquer. Repeat.</p>
+    <button onclick="playClick()">Join Us</button>
+</section>
+
+<section class="stats">
+    <div class="stat"><h3 id="kills">0</h3><p>Kills</p></div>
+    <div class="stat"><h3 id="wins">0</h3><p>Wins</p></div>
+    <div class="stat"><h3 id="rank">0</h3><p>Rank</p></div>
+</section>
+
+<section class="team">
+    <h2>Our Squad</h2>
+    <div class="players">
+        <div class="card"><h3>SID</h3><p>IGL / Rusher</p></div>
+        <div class="card"><h3>Player 2</h3><p>Sniper</p></div>
+        <div class="card"><h3>Player 3</h3><p>Support</p></div>
+    </div>
+</section>
+
+<script>
+// SOUND
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playClick(){
+    let osc = audioCtx.createOscillator();
+    let gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.frequency.value = 400;
+    osc.start();
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
+    osc.stop(audioCtx.currentTime + 0.2);
+}
+
+// CURSOR FOLLOW
+const cursor = document.getElementById("cursor");
+window.addEventListener("mousemove", e=>{
+    cursor.style.left = e.clientX + "px";
+    cursor.style.top = e.clientY + "px";
+});
+
+// STATS
+function animate(id,end){
+ let start=0;
+ let step=end/100;
+ let i=setInterval(()=>{
+  start+=step;
+  if(start>=end){start=end;clearInterval(i);}
+  document.getElementById(id).innerText=Math.floor(start);
+ },20);
+}
+animate("kills",1240);
+animate("wins",320);
+animate("rank",1);
+
+// PARTICLES + CONNECTIONS
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+
+let particles=[];
+for(let i=0;i<80;i++){
+ particles.push({
+  x:Math.random()*canvas.width,
+  y:Math.random()*canvas.height,
+  vx:(Math.random()-0.5),
+  vy:(Math.random()-0.5)
+ });
+}
+
+function draw(){
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ particles.forEach(p=>{
+  p.x+=p.vx;
+  p.y+=p.vy;
+
+  if(p.x<0||p.x>canvas.width)p.vx*=-1;
+  if(p.y<0||p.y>canvas.height)p.vy*=-1;
+
+  ctx.beginPath();
+  ctx.arc(p.x,p.y,2,0,Math.PI*2);
+  ctx.fillStyle="#00f0ff";
+  ctx.fill();
+
+  particles.forEach(p2=>{
+    let dx=p.x-p2.x;
+    let dy=p.y-p2.y;
+    let dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<100){
+      ctx.beginPath();
+      ctx.strokeStyle="rgba(0,240,255,0.2)";
+      ctx.moveTo(p.x,p.y);
+      ctx.lineTo(p2.x,p2.y);
+      ctx.stroke();
+    }
+  });
+ });
+
+ requestAnimationFrame(draw);
+}
+draw();
+</script>
+
+</body>
+</html>
